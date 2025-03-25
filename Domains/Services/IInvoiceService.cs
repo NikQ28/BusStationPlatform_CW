@@ -1,7 +1,5 @@
-﻿using BusStationPlatform.Storage;
-using BusStationPlatform.Domains.Entities;
+﻿using BusStationPlatform.Domains.Entities;
 using BusStationPlatform.Domains.EntitiesDTO;
-using Microsoft.EntityFrameworkCore;
 
 namespace BusStationPlatform.Domains.Services
 {

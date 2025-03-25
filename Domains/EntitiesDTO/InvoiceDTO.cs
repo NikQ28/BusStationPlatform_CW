@@ -1,5 +1,4 @@
 ﻿using BusStationPlatform.Domains.Entities;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace BusStationPlatform.Domains.EntitiesDTO
 {
