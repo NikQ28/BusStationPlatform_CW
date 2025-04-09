@@ -2,9 +2,9 @@
 using Route = BusStationPlatform.Domains.Entities.Route;
 using Microsoft.EntityFrameworkCore;
 
-namespace BusStationPlatform.Storage
+namespace BusStationPlatform.Data
 {
-    public class ApplicationContext : DbContext
+    public class BusStationPlatformContext : DbContext
     {
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Passenger> Passengers { get; set; } = null!;
@@ -15,16 +15,6 @@ namespace BusStationPlatform.Storage
         public DbSet<OccupiedPlace> OccupiedPlaces { get; set; } = null!;
         public DbSet<Payment> Payments { get; set; } = null!;
 
-        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
-
-        public ApplicationContext()
-        {
-            Database.EnsureCreated();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=1111;Database=BusStationPlatformDB;Username=postgres;Password=SNA280205");
-        }
+        public BusStationPlatformContext(DbContextOptions<BusStationPlatformContext> options) : base(options) { }
     }
 }

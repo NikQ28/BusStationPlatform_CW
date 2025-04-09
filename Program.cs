@@ -1,23 +1,26 @@
-using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.EntitiesDTO;
-using BusStationPlatform.Domains.Services;
-using BusStationPlatform.Storage;
+using BusStationPlatform.Data;
+using BusStationPlatform.Repositories;
+using BusStationPlatform.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusStationPlatform
 {
-    class Programm
+    public class Programm
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            string connection = builder.Configuration.GetConnectionString("DefaultConnection");
-            builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
+            builder.Services.AddDbContext<BusStationPlatformContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddTransient<IRepository, Repository>();
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -27,7 +30,9 @@ namespace BusStationPlatform
             }
 
             app.UseHttpsRedirection();
+
             app.UseAuthorization();
+
             app.MapControllers();
 
             app.Run();
