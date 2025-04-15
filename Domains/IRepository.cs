@@ -1,8 +1,9 @@
-﻿using BusStationPlatform.Domains.Entities;
+﻿using BusStationPlatform.Domains.DTO;
+using BusStationPlatform.Domains.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Route = BusStationPlatform.Domains.Entities.Route;
 
-namespace BusStationPlatform.Repositories.Interfaces
+namespace BusStationPlatform.Domains
 {
     public interface IRepository
     {
@@ -37,7 +38,7 @@ namespace BusStationPlatform.Repositories.Interfaces
         /// Удаляет пользователя по его идентификатору.
         /// </summary>
         /// <param name="id">Идентификатор пользователя.</param>
-        public Task DeleteUserAsync(int id);
+        public Task<int?> DeleteUserAsync(int id);
 
         /// <summary>
         /// Получает пассажира по его идентификатору.
@@ -45,6 +46,13 @@ namespace BusStationPlatform.Repositories.Interfaces
         /// <param name="id">Идентификатор пассажира.</param>
         /// <returns>Пассажир или null, если не найден.</returns>
         public Task<Passenger?> GetPassengerByIDAsync(int id);
+
+        /// <summary>
+        /// Получает пассажира по его паспорту.
+        /// </summary>
+        /// <param name="passport">Паспорт пассажира.</param>
+        /// <returns>Пассажир или null, если не найден.</returns>
+        public Task<Passenger?> GetPassengerByPassportAsync(string passport);
 
         /// <summary>
         /// Создает нового пассажира.
@@ -63,7 +71,7 @@ namespace BusStationPlatform.Repositories.Interfaces
         /// Удаляет пассажира по его идентификатору.
         /// </summary>
         /// <param name="id">Идентификатор пассажира.</param>
-        public Task DeletePassengerAsync(int id);
+        public Task<int?> DeletePassengerAsync(int id);
 
         /// <summary>
         /// Получает список пассажиров по пользователю.
@@ -89,7 +97,7 @@ namespace BusStationPlatform.Repositories.Interfaces
         /// Удаляет билет по его идентификатору.
         /// </summary>
         /// <param name="id">Идентификатор билета.</param>
-        public Task DeleteTicketAsync(int id);
+        public Task<int?> DeleteTicketAsync(int id);
 
         /// <summary>
         /// Получает список билетов по пассажиру.
@@ -113,13 +121,20 @@ namespace BusStationPlatform.Repositories.Interfaces
         public Task<List<Ticket>?> GetTicketsByInvoiceAsync(Invoice invoice);
 
         /// <summary>
+        /// Получает маршрут по идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор.</param>
+        /// <returns>Список билетов или null, если не найдено.</returns>
+        public Task<Route?> GetRouteByIDAsync(int id);
+
+        /// <summary>
         /// Получает список маршрутов по пунктам отправления, назначения и дате.
         /// </summary>
         /// <param name="departurePoint">Пункт отправления.</param>
         /// <param name="arrivalPoint">Пункт назначения.</param>
         /// <param name="date">Дата.</param>
         /// <returns>Список маршрутов или null, если не найдено.</returns>
-        public Task<List<Route>?> GetRoutesByPointsDateAsync(string departurePoint, string arrivalPoint, DateTime date);
+        public Task<List<Route>?> GetRoutesByPointsDateAsync(RouteDTO routeDTO);
 
         /// <summary>
         /// Получает список мест по маршруту.
@@ -167,5 +182,12 @@ namespace BusStationPlatform.Repositories.Interfaces
         /// <param name="ticket">Билет.</param>
         /// <returns>Занятое место или null, если не найдено.</returns>
         public Task<OccupiedPlace?> GetOccupiedPlaceByTicketAsync(Ticket ticket);
+
+        /// <summary>
+        /// Получает занятое место по месту.
+        /// </summary>
+        /// <param name="place">Место.</param>
+        /// <returns>Занятое место или null, если не найдено.</returns>
+        public Task<OccupiedPlace?> GetOccupiedPlaceByPlaceAsync(Place place);
     }
 }

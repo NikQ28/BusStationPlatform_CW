@@ -1,7 +1,9 @@
-using BusStationPlatform.Data;
-using BusStationPlatform.Repositories;
-using BusStationPlatform.Repositories.Interfaces;
+using BusStationPlatform.Domains;
+using BusStationPlatform.Domains.Services;
+using BusStationPlatform.Domains.IServices;
+using BusStationPlatform.Storage;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace BusStationPlatform
 {
@@ -20,6 +22,8 @@ namespace BusStationPlatform
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddTransient<IRepository, Repository>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
+
 
             var app = builder.Build();
 

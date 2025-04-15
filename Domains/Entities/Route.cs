@@ -8,26 +8,31 @@
         /// <summary>
         /// Уникальный идентификатор маршрута.
         /// </summary>
-        public int RouteID { get; set; }
+        public required int RouteID { get; set; }
 
         /// <summary>
         /// Точка отправления маршрута.
         /// </summary>
-        public string? DeparturePoint { get; set; }
+        public required string DeparturePoint { get; set; }
 
         /// <summary>
         /// Точка назначения маршрута.
         /// </summary>
-        public string? ArrivalPoint { get; set; }
+        public required string ArrivalPoint { get; set; }
 
         /// <summary>
         /// Дата и время отправления маршрута.
         /// </summary>
-        public DateTime? DepartureDatetime { get; set; }
+        public required DateTime DepartureDatetime { get; set; }
 
         /// <summary>
         /// Цена билета на маршрут.
         /// </summary>
         public decimal Price { get; set; }
+
+        /// <summary>
+        /// Число свободных мест для бронирования.
+        /// </summary>
+        public required int AvaliablePlaces { get; set; } 
     }
 }

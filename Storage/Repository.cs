@@ -1,7 +1,8 @@
-using BusStationPlatform.Data;
+using BusStationPlatform.Domains;
+using BusStationPlatform.Domains.DTO;
 using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using System.Data;
 using System.Threading.Tasks;
 using Route = BusStationPlatform.Domains.Entities.Route;
 
-namespace BusStationPlatform.Repositories
+namespace BusStationPlatform.Storage
 {
     public class Repository(BusStationPlatformContext _context) : IRepository
     {
@@ -36,18 +37,23 @@ namespace BusStationPlatform.Repositories
             return updatedUser;
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task<int?> DeleteUserAsync(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
+                return id;
             }
+            return null;
         }
 
         public async Task<Passenger?> GetPassengerByIDAsync(int id) =>
             await _context.Passengers.FindAsync(id);
+
+        public async Task<Passenger?> GetPassengerByPassportAsync(string passport) =>
+            await _context.Passengers.FirstOrDefaultAsync(passenger => passenger.Passport == passport);
 
         public async Task<Passenger?> CreatePassengerAsync(Passenger newPassenger)
         {
@@ -66,14 +72,16 @@ namespace BusStationPlatform.Repositories
             return updatedPassenger;
         }
 
-        public async Task DeletePassengerAsync(int id)
+        public async Task<int?> DeletePassengerAsync(int id)
         {
             var passenger = await _context.Passengers.FindAsync(id);
             if (passenger != null)
             {
                 _context.Passengers.Remove(passenger);
                 await _context.SaveChangesAsync();
+                return id;
             }
+            return null;
         }
 
         public async Task<List<Passenger>?> GetPassengersByUserAsync(User user)
@@ -98,14 +106,16 @@ namespace BusStationPlatform.Repositories
             return newTicket;
         }
 
-        public async Task DeleteTicketAsync(int id)
+        public async Task<int?> DeleteTicketAsync(int id)
         {
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket != null)
             {
                 _context.Tickets.Remove(ticket);
                 await _context.SaveChangesAsync();
+                return id;
             }
+            return null;
         }
 
         public async Task<List<Ticket>?> GetTicketsByPassengerAsync(Passenger passenger)
@@ -144,15 +154,18 @@ namespace BusStationPlatform.Repositories
                 .Select(ticket => ticket.TicketID)
                 .ToListAsync();
 
-        public async Task<List<Route>?> GetRoutesByPointsDateAsync(string depaturePoint, string arrivalPoint, DateTime date)
+        public async Task<Route?> GetRouteByIDAsync(int id) =>
+            await _context.Routes.FindAsync(id);
+
+        public async Task<List<Route>?> GetRoutesByPointsDateAsync(RouteDTO routeDTO)
         {
-            var routesID = await GetRoutesIDByPointsDateAsync(depaturePoint, arrivalPoint, date);
+            var routesID = await GetRoutesIDByPointsDateAsync(routeDTO);
             return await _context.Routes.Where(route => routesID.Contains(route.RouteID)).ToListAsync();
         }
 
-        public async Task<List<int>?> GetRoutesIDByPointsDateAsync(string depaturePoint, string arrivalPoint, DateTime date) =>
+        public async Task<List<int>?> GetRoutesIDByPointsDateAsync(RouteDTO routeDTO) =>
             await _context.Routes
-                .Where(r => r.DeparturePoint == depaturePoint && r.ArrivalPoint == arrivalPoint && r.DepartureDatetime == date)
+                .Where(r => r.DeparturePoint == routeDTO.DeparturePoint && r.ArrivalPoint == routeDTO.ArrivalPoint && r.DepartureDatetime == routeDTO.DepartureDateTime)
                 .Select(r => r.RouteID)
                 .ToListAsync();
 
@@ -202,5 +215,8 @@ namespace BusStationPlatform.Repositories
 
         public async Task<OccupiedPlace?> GetOccupiedPlaceByTicketAsync(Ticket ticket) =>
             await _context.OccupiedPlaces.FirstOrDefaultAsync(occupiedPlace => occupiedPlace.TicketID == ticket.TicketID);
+
+        public async Task<OccupiedPlace?> GetOccupiedPlaceByPlaceAsync(Place place) =>
+            await _context.OccupiedPlaces.FirstOrDefaultAsync(occupiedPlace => occupiedPlace.PlaceID == place.PlaceID);
     }
 } 

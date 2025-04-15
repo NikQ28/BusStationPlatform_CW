@@ -1,4 +1,6 @@
-﻿namespace BusStationPlatform.Domains.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace BusStationPlatform.Domains.Entities
 {
     /// <summary>
     /// Представляет пользователя системы.
@@ -8,22 +10,23 @@
         /// <summary>
         /// Уникальный идентификатор пользователя.
         /// </summary>
+        [JsonIgnore]
         public int UserID { get; set; }
 
         /// <summary>
         /// Имя пользователя.
         /// </summary>
-        public string? Username { get; set; }
+        public required string Username { get; set; }
 
         /// <summary>
         /// Пароль пользователя.
         /// </summary>
-        public string? Password { get; set; }
+        public required string Password { get; set; }
 
         /// <summary>
         /// Электронная почта пользователя.
         /// </summary>
-        public string? Email { get; set; }
+        public required string Email { get; set; }
 
         /// <summary>
         /// Номер телефона пользователя.

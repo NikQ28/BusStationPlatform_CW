@@ -2,7 +2,7 @@
 using Route = BusStationPlatform.Domains.Entities.Route;
 using Microsoft.EntityFrameworkCore;
 
-namespace BusStationPlatform.Data
+namespace BusStationPlatform.Storage
 {
     public class BusStationPlatformContext : DbContext
     {
