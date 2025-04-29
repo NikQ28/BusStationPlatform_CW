@@ -19,6 +19,6 @@ namespace BusStationPlatform.Domains.Services.Contracts
         /// <param name="arrivalPoint">Пункт назначения.</param>
         /// <param name="date">Дата.</param>
         /// <returns>Список маршрутов или null, если не найдено.</returns>
-        public Task<List<Route>?> GetRoutesByPointsDateAsync(RouteDTO routeDTO);
+        public Task<List<Route>?> GetRoutesByPointsDateAsync(RouteRequestDTO routeDTO);
     }
 }

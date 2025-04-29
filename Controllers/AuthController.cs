@@ -2,6 +2,7 @@
 using BusStationPlatform.Domains.Entities;
 using BusStationPlatform.Domains.DTO;
 using BusStationPlatform.Domains.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BusStationPlatform.Controllers
 {
@@ -19,10 +20,18 @@ namespace BusStationPlatform.Controllers
 
         [Route("Authentication")]
         [HttpGet]
-        public async Task<IActionResult> LoginAsync([FromQuery] LoginDTO loginDTO)
+        public async Task<IActionResult> LoginAsync([FromQuery] LoginRequestDTO loginDTO)
         {
             var user = await _authService.LoginAsync(loginDTO);
-            return (user == null) ? NotFound() : Ok(user);
+            return user == null ? NotFound() : Ok(user);
+        }
+
+        [Route("ChangePassword")]
+        [HttpPut]
+        public async Task<IActionResult> ChangePasswordAsync([FromQuery] LoginRequestDTO loginDTO)
+        {
+            var user = await _authService.ChangePasswordAsync(loginDTO);
+            return user == null ? NotFound() : Ok(user);
         }
     }
 }

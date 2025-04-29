@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using BusStationPlatform.Domains.Services.Contracts;
 using Route = BusStationPlatform.Domains.Entities.Route;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BusStationPlatform.Storage
 {
@@ -27,6 +28,18 @@ namespace BusStationPlatform.Storage
             _context.OccupiedPlace.Add(newOccupiedPlace);
             await _context.SaveChangesAsync();
             return newOccupiedPlace;
+        }
+
+        public async Task<int?> DeleteOccupiedPlaceAsync(int id)
+        {
+            var occupiedPlace = await _context.OccupiedPlace.FindAsync(id);
+            if (occupiedPlace != null)
+            {
+                _context.Remove(occupiedPlace);
+                await _context.SaveChangesAsync();
+                return id;
+            }
+            return null;
         }
 
         public async Task<OccupiedPlace?> GetOccupiedPlaceByTicketAsync(Ticket ticket) =>

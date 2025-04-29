@@ -20,6 +20,13 @@ namespace BusStationPlatform.Domains.Services.Contracts
         /// </summary>
         /// <param name="loginDTO">Данные для аутентификации пользователя.</param>
         /// <returns>Пользователь, если аутентификация успешна; иначе null.</returns>
-        public Task<User?> LoginAsync(LoginDTO loginDTO);
+        public Task<User?> LoginAsync(LoginRequestDTO loginDTO);
+
+        /// <summary>
+        /// Изменяет пароль пользователя на основе предоставленных данных.
+        /// </summary>
+        /// <param name="loginDTO">Данные для смены пароля пользователя.</param>
+        /// <returns>Пользователь, если смена пароля успешна; иначе null.</returns>
+        public Task<User?> ChangePasswordAsync(LoginRequestDTO loginDTO); 
     }
 }

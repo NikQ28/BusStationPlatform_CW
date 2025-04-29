@@ -14,6 +14,6 @@ namespace BusStationPlatform.Domains.Services.Contracts
         /// </summary>
         /// <param name="routeDTO">Объект, содержащий данные для поиска маршрутов.</param>
         /// <returns>Асинхронная задача, представляющая результат операции. Результат задачи содержит список маршрутов, если они найдены; в противном случае - null.</returns>
-        public Task<List<Route>?> GetRoutesAsync(RouteDTO routeDTO);
+        public Task<List<Route>?> GetRoutesAsync(RouteRequestDTO routeDTO);
     }
 }

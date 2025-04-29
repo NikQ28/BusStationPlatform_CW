@@ -1,9 +1,9 @@
-using BusStationPlatform.Domains;
 using BusStationPlatform.Domains.Services;
 using BusStationPlatform.Storage;
 using Microsoft.EntityFrameworkCore;
 using BusStationPlatform.Domains.Services.Contracts;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
+using BusStationPlatform.Domains.Services.UseCases;
 
 namespace BusStationPlatform
 {
@@ -18,7 +18,7 @@ namespace BusStationPlatform
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<BusStationPlatformContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IPassengerRepository, PassengerRepository>();
@@ -31,7 +31,7 @@ namespace BusStationPlatform
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IBookingService, BookingService>();
             builder.Services.AddTransient<ISearchRouteService, SearchRouteService>();
-
+            builder.Services.AddTransient<IReturnTicketService, ReturnTicketService>();
 
             var app = builder.Build();
 
@@ -43,8 +43,9 @@ namespace BusStationPlatform
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.MapControllers();
 
             app.Run();

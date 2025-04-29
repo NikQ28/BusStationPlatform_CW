@@ -15,11 +15,11 @@ namespace BusStationPlatform.Domains.DTO
         /// <summary>
         /// Список пассажиров, для которых осуществляется бронирование.
         /// </summary>
-        public List<Passenger> Passengers { get; set; }
+        public List<Passenger>? Passengers { get; set; }
 
         /// <summary>
         /// Список идентификаторов мест, которые необходимо забронировать.
         /// </summary>
-        public List<int> PlacesID { get; set; }
+        public List<int>? PlacesID { get; set; }
     }
 }

@@ -27,6 +27,13 @@ namespace BusStationPlatform.Domains.Services.Contracts
         public Task<OccupiedPlace?> CreateOccupiedPlaceAsync(OccupiedPlace newOccupiedPlace);
 
         /// <summary>
+        /// Удалить занятое место.
+        /// </summary>
+        /// <param name="occupiedPlaceID">Идентификатор занятого места.</param>
+        /// <returns>Идентификатор занятого места или null, если не найдено.</returns>
+        public Task<int?> DeleteOccupiedPlaceAsync(int occupiedPlaceID);
+
+        /// <summary>
         /// Получает занятое место по билету.
         /// </summary>
         /// <param name="ticket">Билет.</param>

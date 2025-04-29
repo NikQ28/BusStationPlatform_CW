@@ -12,7 +12,7 @@ namespace BusStationPlatform.Controllers
     {
         [Route("Search")]
         [HttpGet]
-        public async Task<IActionResult> GetRoutesAsync([FromQuery] RouteDTO routeDTO)
+        public async Task<IActionResult> GetRoutesAsync([FromQuery] RouteRequestDTO routeDTO)
         {
             var routes = await _searchRouteService.GetRoutesAsync(routeDTO);
             return routes == null ? BadRequest() : Ok(routes);

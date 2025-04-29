@@ -10,7 +10,7 @@ namespace BusStationPlatform.Domains.Entities
         /// <summary>
         /// Уникальный идентификатор пассажира.
         /// </summary>
-        [JsonIgnore]
+        [JsonIgnore] 
         public int PassengerID { get; set; }
 
         /// <summary>

@@ -6,8 +6,7 @@ namespace BusStationPlatform.Domains.Services
 {
     public class SearchRouteService(IRouteRepository _routeRepository) : ISearchRouteService
     {
-        public async Task<List<Route>?> GetRoutesAsync(RouteDTO routeDTO) =>
+        public async Task<List<Route>?> GetRoutesAsync(RouteRequestDTO routeDTO) =>
             await _routeRepository.GetRoutesByPointsDateAsync(routeDTO);
     }
-
 }

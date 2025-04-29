@@ -15,6 +15,9 @@ namespace BusStationPlatform.Storage
         public DbSet<OccupiedPlace> OccupiedPlace { get; set; } = null!;
         public DbSet<Payment> Payment { get; set; } = null!;
 
-        public BusStationPlatformContext(DbContextOptions<BusStationPlatformContext> options) : base(options) { }
+        public BusStationPlatformContext(DbContextOptions<BusStationPlatformContext> options) : base(options) 
+        {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
     }
 }
