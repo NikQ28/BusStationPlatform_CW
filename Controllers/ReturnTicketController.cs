@@ -19,7 +19,7 @@ namespace BusStationPlatform.Controllers
         /// <param name="token">Токен отмены операции.</param>
         /// <returns>Результат возврата билета.</returns>
         [HttpPost]
-        [Route("ReturnTicket")]
+        [Route("return-ticket")]
         public async Task<IActionResult> ReturnTicketAsync([FromQuery] ReturnTicketRequest returnTicketRequest, CancellationToken token)
         {
             if (returnTicketRequest == null) return BadRequest("Запрос не может быть пустым"); 
