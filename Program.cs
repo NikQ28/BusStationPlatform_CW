@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using BusStationPlatform.Domains.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using BusStationPlatform.Domains.Services.UseCases;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
 
 namespace BusStationPlatform
 {
@@ -26,7 +27,7 @@ namespace BusStationPlatform
             builder.Services.AddTransient<ITicketRepository, TicketRepository>();
             builder.Services.AddTransient<IInvoiceRepository, InvoiceRepository>();
             builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
-            builder.Services.AddTransient<IPlaceRepository, PlaceRepository>();
+            builder.Services.AddTransient<ISeatRepository, SeatRepository>();
 
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IBookingService, BookingService>();

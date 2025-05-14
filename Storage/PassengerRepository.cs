@@ -1,56 +1,57 @@
 ﻿using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.Services.Contracts;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusStationPlatform.Storage
 {
-    public class PassengerRepository(BusStationPlatformContext _context) : IPassengerRepository
+    public class PassengerRepository(BusStationPlatformContext context) : IPassengerRepository
     {
-        public async Task<Passenger?> GetPassengerByIDAsync(int id) =>
-            await _context.Passenger.FindAsync(id);
+        public async Task<Passenger?> GetPassengerByIdAsync(int id, CancellationToken token) =>
+            await context.Passenger.FindAsync([id], token);
 
-        public async Task<Passenger?> GetPassengerByPassportAsync(string passport) =>
-            await _context.Passenger.FirstOrDefaultAsync(passenger => passenger.Passport == passport);
+        public async Task<Passenger?> GetPassengerByPassportAsync(string passport, CancellationToken token) =>
+            await context.Passenger.FirstOrDefaultAsync(passenger => passenger.Passport == passport, token);
 
-        public async Task<Passenger?> CreatePassengerAsync(Passenger newPassenger)
+        public async Task<Passenger?> CreatePassengerAsync(Passenger newPassenger, CancellationToken token)
         {
-            _context.Passenger.Add(newPassenger);
-            await _context.SaveChangesAsync();
+            context.Passenger.Add(newPassenger);
+            await context.SaveChangesAsync(token);
             return newPassenger;
         }
 
-        public async Task<Passenger?> UpdatePassengerAsync(Passenger updatedPassenger)
+        public async Task<Passenger?> UpdatePassengerAsync(Passenger updatedPassenger, CancellationToken token)
         {
-            var passenger = await _context.Passenger.FindAsync(updatedPassenger.PassengerID);
+            var passenger = await context.Passenger.FindAsync(updatedPassenger.PassengerId, token);
             if (passenger == null)
                 return null;
-            _context.Update(updatedPassenger);
-            await _context.SaveChangesAsync();
+            context.Update(updatedPassenger);
+            await context.SaveChangesAsync(token);
             return updatedPassenger;
         }
 
-        public async Task<int?> DeletePassengerAsync(int id)
+        public async Task<int?> DeletePassengerAsync(int id, CancellationToken token)
         {
-            var passenger = await _context.Passenger.FindAsync(id);
+            var passenger = await context.Passenger.FindAsync(id, token);
             if (passenger != null)
             {
-                _context.Passenger.Remove(passenger);
-                await _context.SaveChangesAsync();
+                context.Passenger.Remove(passenger);
+                await context.SaveChangesAsync(token);
                 return id;
             }
             return null;
         }
 
-        public async Task<List<Passenger>?> GetPassengersByUserAsync(User user)
+        public async Task<List<Passenger>?> GetPassengersByUserAsync(User user, CancellationToken token)
         {
-            var passengersID = await GetPassengersIDByUserAsync(user);
-            return await _context.Passenger.Where(passenger => passengersID.Contains(passenger.PassengerID)).ToListAsync();
+            var passengersIds = await GetPassengersIdsByUserAsync(user, token);
+            if (passengersIds == null) return null;
+            return await context.Passenger.Where(passenger => passengersIds.Contains(passenger.PassengerId)).ToListAsync(token);
         }
 
-        public async Task<List<int>?> GetPassengersIDByUserAsync(User user) =>
-            await _context.Passenger
-                .Where(u => u.UserID == user.UserID)
-                .Select(u => u.PassengerID)
-                .ToListAsync();
+        public async Task<List<int>?> GetPassengersIdsByUserAsync(User user, CancellationToken token) =>
+            await context.Passenger
+                .Where(u => u.UserId == user.UserId)
+                .Select(u => u.PassengerId)
+                .ToListAsync(token);
     }
 }

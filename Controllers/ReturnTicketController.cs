@@ -1,31 +1,30 @@
-﻿using BusStationPlatform.Domains.Services.Contracts;
+﻿using Microsoft.AspNetCore.Mvc;
+
+using BusStationPlatform.Domains.Services.Contracts;
 using BusStationPlatform.Domains.ValueObjects;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 
 namespace BusStationPlatform.Controllers
 {
+    /// <summary>
+    /// Контроллер для управления возвратом билетов.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class ReturnTicketController(IReturnTicketService _returnTicketService) : ControllerBase
+    public class ReturnTicketController(IReturnTicketService returnTicketService) : ControllerBase
     {
-        [HttpDelete]
+        /// <summary>
+        /// Осуществляет возврат билета.
+        /// </summary>
+        /// <param name="returnTicketRequest">Данные для возврата билета.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns>Результат возврата билета.</returns>
+        [HttpPost]
         [Route("ReturnTicket")]
-        public async Task<IActionResult> ReturnTicketAsync([FromQuery] ReturnTicketRequestDTO returnTicketRequestDTO)
+        public async Task<IActionResult> ReturnTicketAsync([FromQuery] ReturnTicketRequest returnTicketRequest, CancellationToken token)
         {
-            if (returnTicketRequestDTO == null || returnTicketRequestDTO.TicketID <= 0 || string.IsNullOrEmpty(returnTicketRequestDTO.Surname))
-            {
-                return BadRequest("Неверные данные запроса");
-            }
-
-            var result = await _returnTicketService.ReturnTicketAsync(returnTicketRequestDTO);
-            
-            if (result == null)
-            {
-                return NotFound("Билет не найден или фамилия не совпадает");
-            }
-
-            return Ok("Билет успешно возвращен");
+            if (returnTicketRequest == null) return BadRequest("Запрос не может быть пустым"); 
+            var (error, result) = await returnTicketService.ReturnTicketAsync(returnTicketRequest, token);
+            return (string.IsNullOrWhiteSpace(error)) ? Ok($"Билет {result} успешно возвращен") : NotFound(error);
         }
     }
 }

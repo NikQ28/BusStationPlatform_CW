@@ -1,68 +1,71 @@
 ﻿using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.Services.Contracts;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Route = BusStationPlatform.Domains.Entities.Route;
 
 namespace BusStationPlatform.Storage
 {
-    public class TicketRepository(BusStationPlatformContext _context) : ITicketRepository
+    public class TicketRepository(BusStationPlatformContext context) : ITicketRepository
     {
-        public async Task<Ticket?> GetTicketByIDAsync(int id) =>
-            await _context.Ticket.FindAsync(id);
+        public async Task<Ticket?> GetTicketByIdAsync(int id, CancellationToken token) =>
+            await context.Ticket.FindAsync([id], token);
 
-        public async Task<Ticket?> CreateTicketAsync(Ticket newTicket)
+        public async Task<Ticket?> CreateTicketAsync(Ticket newTicket, CancellationToken token)
         {
-            _context.Ticket.Add(newTicket);
-            await _context.SaveChangesAsync();
+            context.Ticket.Add(newTicket);
+            await context.SaveChangesAsync(token);
             return newTicket;
         }
 
-        public async Task<int?> DeleteTicketAsync(int id)
+        public async Task<int?> DeleteTicketAsync(int id, CancellationToken token)
         {
-            var ticket = await _context.Ticket.FindAsync(id);
+            var ticket = await context.Ticket.FindAsync([id], token);
             if (ticket != null)
             {
-                _context.Ticket.Remove(ticket);
-                await _context.SaveChangesAsync();
+                context.Ticket.Remove(ticket);
+                await context.SaveChangesAsync(token);
                 return id;
             }
             return null;
         }
 
-        public async Task<List<Ticket>?> GetTicketsByPassengerAsync(Passenger passenger)
+        public async Task<List<Ticket>?> GetTicketsByPassengerAsync(Passenger passenger, CancellationToken token)
         {
-            var ticketsID = await GetTicketsIDByPassengerAsync(passenger);
-            return await _context.Ticket.Where(ticket => ticketsID.Contains(ticket.TicketID)).ToListAsync();
+            var ticketsIds = await GetTicketsIdsByPassengerAsync(passenger, token);
+            if (ticketsIds == null) return null;
+            return await context.Ticket.Where(ticket => ticketsIds.Contains(ticket.TicketId)).ToListAsync(token);
         }
 
-        public async Task<List<int>?> GetTicketsIDByPassengerAsync(Passenger passenger) =>
-            await _context.Ticket
-                .Where(p => p.PassengerID == passenger.PassengerID)
-                .Select(p => p.TicketID)
-                .ToListAsync();
+        public async Task<List<int>?> GetTicketsIdsByPassengerAsync(Passenger passenger, CancellationToken token) =>
+            await context.Ticket
+                .Where(p => p.PassengerId == passenger.PassengerId)
+                .Select(p => p.TicketId)
+                .ToListAsync(token);
 
-        public async Task<List<Ticket>?> GetTicketsByRouteAsync(Route route)
+        public async Task<List<Ticket>?> GetTicketsByRouteAsync(Route route, CancellationToken token)
         {
-            var ticketsID = await GetTicketsIDByRouteAsync(route);
-            return await _context.Ticket.Where(ticket => ticketsID.Contains(ticket.TicketID)).ToListAsync();
+            var ticketsIds = await GetTicketsIdsByRouteAsync(route, token);
+            if (ticketsIds == null) return null;
+            return await context.Ticket.Where(ticket => ticketsIds.Contains(ticket.TicketId)).ToListAsync(token);
         }
 
-        public async Task<List<int>?> GetTicketsIDByRouteAsync(Route route) =>
-            await _context.Ticket
-            .Where(t => t.RouteID == route.RouteID)
-            .Select(t => t.TicketID)
-            .ToListAsync();
+        public async Task<List<int>?> GetTicketsIdsByRouteAsync(Route route, CancellationToken token) =>
+            await context.Ticket
+            .Where(t => t.RouteId == route.RouteId)
+            .Select(t => t.TicketId)
+            .ToListAsync(token);
 
-        public async Task<List<Ticket>?> GetTicketsByInvoiceAsync(Invoice invoice)
+        public async Task<List<Ticket>?> GetTicketsByInvoiceAsync(Invoice invoice, CancellationToken token)
         {
-            var ticketsID = await GetTicketsIDByInvoiceAsync(invoice);
-            return await _context.Ticket.Where(ticket => ticketsID.Contains(ticket.TicketID)).ToListAsync();
+            var ticketsIds = await GetTicketsIdsByInvoiceAsync(invoice, token);
+            if (ticketsIds == null) return null;
+            return await context.Ticket.Where(ticket => ticketsIds.Contains(ticket.TicketId)).ToListAsync(token);
         }
 
-        public async Task<List<int>?> GetTicketsIDByInvoiceAsync(Invoice invoice) =>
-            await _context.Ticket
-                .Where(ticket => ticket.InvoiceID == invoice.InvoiceID)
-                .Select(ticket => ticket.TicketID)
-                .ToListAsync();
+        public async Task<List<int>?> GetTicketsIdsByInvoiceAsync(Invoice invoice, CancellationToken token) =>
+            await context.Ticket
+                .Where(ticket => ticket.InvoiceId == invoice.InvoiceId)
+                .Select(ticket => ticket.TicketId)
+                .ToListAsync(token);
     }
 }

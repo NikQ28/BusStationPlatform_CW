@@ -1,28 +1,25 @@
 ﻿using BusStationPlatform.Domains.Services.Contracts;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
 using BusStationPlatform.Domains.ValueObjects;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.InteropServices;
 
 namespace BusStationPlatform.Domains.Services.UseCases
 {
-    public class ReturnTicketService(ITicketRepository _ticketRepository, IPassengerRepository _passengerRepository, 
-        IPlaceRepository _placeRepository) : IReturnTicketService
+    public class ReturnTicketService(ITicketRepository ticketRepository, IPassengerRepository passengerRepository, 
+        ISeatRepository placeRepository) : IReturnTicketService
     {
-        public async Task<int?> ReturnTicketAsync(ReturnTicketRequestDTO returnTicketRequestDTO)
+        public async Task<(string? error, int? result)> ReturnTicketAsync(ReturnTicketRequest returnTicketRequest, CancellationToken token)
         {
-            var ticket = await _ticketRepository.GetTicketByIDAsync(returnTicketRequestDTO.TicketID);
-            if (ticket == null) return null;
+            var ticket = await ticketRepository.GetTicketByIdAsync(returnTicketRequest.TicketId, token);
+            if (ticket == null) return ($"Билет с номером {returnTicketRequest.TicketId} не найден", null);
 
-            var occupiedPlace = await _placeRepository.GetOccupiedPlaceByTicketAsync(ticket);
-            if (occupiedPlace == null) return null;
+            var occupiedSeat = await placeRepository.GetOccupiedSeatByTicketAsync(ticket, token);
+            if (occupiedSeat == null) return ($"Билет с номером {returnTicketRequest.TicketId} уже возвращён", null);
 
-            await _placeRepository.DeleteOccupiedPlaceAsync(occupiedPlace.OccupiedPlaceID);
-
-            var passenger = await _passengerRepository.GetPassengerByIDAsync(ticket.PassengerID);
-            return passenger == null ? null : (passenger.Surname != returnTicketRequestDTO.Surname) ? null :
-                await _ticketRepository.DeleteTicketAsync(ticket.TicketID);
+            var passenger = await passengerRepository.GetPassengerByIdAsync(ticket.PassengerId, token);
+            if (passenger == null) return ("Пассажир не найден", null);
+            if (passenger.Surname != returnTicketRequest.Surname) return ("Фалимия пассажира введена некорректно", null);
+            await placeRepository.DeleteOccupiedSeatAsync(occupiedSeat.OccupiedSeatId, token);
+            return (null, await ticketRepository.DeleteTicketAsync(ticket.TicketId, token));
         }
     }
 }

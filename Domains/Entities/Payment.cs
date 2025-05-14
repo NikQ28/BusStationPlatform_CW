@@ -8,17 +8,17 @@
         /// <summary>
         /// Уникальный идентификатор платежа.
         /// </summary>
-        public int PaymentID { get; set; }
+        public int PaymentId { get; set; }
 
         /// <summary>
         /// Идентификатор пользователя, связанного с платежом.
         /// </summary>
-        public int UserID { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
         /// Идентификатор счета, связанного с платежом.
         /// </summary>
-        public int InvoiceID { get; set; }
+        public int InvoiceId { get; set; }
 
         /// <summary>
         /// Сумма платежа.

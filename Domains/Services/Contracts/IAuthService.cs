@@ -1,5 +1,5 @@
 ﻿using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.DTO;
+using BusStationPlatform.Domains.ValueObjects;
 
 namespace BusStationPlatform.Domains.Services.Contracts
 {
@@ -11,22 +11,25 @@ namespace BusStationPlatform.Domains.Services.Contracts
         /// <summary>
         /// Регистрирует нового пользователя.
         /// </summary>
-        /// <param name="user">Данные нового пользователя.</param>
-        /// <returns>Зарегистрированный пользователь или null, если регистрация не удалась.</returns>
-        public Task<User?> RegisterAsync(User user);
+        /// <param name="user">Пользователь, которого необходимо зарегистрировать.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns>Кортеж, содержащий ошибку (если есть) и зарегистрированного пользователя.</returns>
+        public Task<(string? error, User? result)> RegisterAsync(User user, CancellationToken token);
 
         /// <summary>
-        /// Аутентифицирует пользователя на основе предоставленных данных.
+        /// Выполняет вход пользователя в систему.
         /// </summary>
-        /// <param name="loginDTO">Данные для аутентификации пользователя.</param>
-        /// <returns>Пользователь, если аутентификация успешна; иначе null.</returns>
-        public Task<User?> LoginAsync(LoginRequestDTO loginDTO);
+        /// <param name="loginRequest">Данные для входа пользователя.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns>Кортеж, содержащий ошибку (если есть) и пользователя.</returns>
+        public Task<(string? error, User? result)> LoginAsync(LoginRequest loginRequest, CancellationToken token);
 
         /// <summary>
-        /// Изменяет пароль пользователя на основе предоставленных данных.
+        /// Изменяет пароль пользователя.
         /// </summary>
-        /// <param name="loginDTO">Данные для смены пароля пользователя.</param>
-        /// <returns>Пользователь, если смена пароля успешна; иначе null.</returns>
-        public Task<User?> ChangePasswordAsync(LoginRequestDTO loginDTO); 
+        /// <param name="changePasswordRequest">Данные для смены пароля.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns>Кортеж, содержащий ошибку (если есть) и пользователя.</returns>
+        public Task<(string? error, User? result)> ChangePasswordAsync(СhangePasswordRequest changePasswordRequest, CancellationToken token);
     }
 }

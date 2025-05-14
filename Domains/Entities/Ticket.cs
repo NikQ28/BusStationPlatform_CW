@@ -8,22 +8,22 @@
         /// <summary>
         /// Уникальный идентификатор билета.
         /// </summary>
-        public int TicketID { get; set; }
+        public int TicketId { get; set; }
 
         /// <summary>
         /// Идентификатор пассажира, которому принадлежит билет.
         /// </summary>
-        public int PassengerID { get; set; }
+        public int PassengerId { get; set; }
 
         /// <summary>
         /// Идентификатор маршрута, на который выдан билет.
         /// </summary>
-        public int RouteID { get; set; }
+        public int RouteId { get; set; }
 
         /// <summary>
         /// Идентификатор счета, связанного с билетом.
         /// </summary>
-        public int InvoiceID { get; set; }
+        public int InvoiceId { get; set; }
 
         /// <summary>
         /// Дата и время отправления по билету.

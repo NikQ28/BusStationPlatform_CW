@@ -1,35 +1,36 @@
-﻿using BusStationPlatform.Domains.DTO;
-using BusStationPlatform.Domains.Entities;
+﻿using BusStationPlatform.Domains.Entities;
 using BusStationPlatform.Domains.Services.Contracts;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
+using BusStationPlatform.Domains.ValueObjects;
 
-namespace BusStationPlatform.Domains.Services
+namespace BusStationPlatform.Domains.Services.UseCases
 {
-    public class AuthService(IUserRepository _userRepository) : IAuthService
+    public class AuthService(IUserRepository userRepository) : IAuthService
     {
-        public async Task<User?> RegisterAsync(User newUser) =>
-            (await IsUserExistsAsync(newUser)) ? null : await _userRepository.CreateUserAsync(newUser);
-
-        public async Task<User?> LoginAsync(LoginRequestDTO loginDTO)
+        public async Task<(string? error, User? result)> RegisterAsync(User newUser, CancellationToken token)
         {
-            if (await _userRepository.GetUserByEmailAsync(loginDTO.Email) == null)
-                return null;
-            var user = await _userRepository.GetUserByEmailAsync(loginDTO.Email);
-            if (user.Password != loginDTO.Password)
-                return null;
-            return user;
+            var result = await userRepository.GetUserByEmailAsync(newUser.Email, token);
+            return result == null 
+                ? (null, await userRepository.CreateUserAsync(newUser, token))
+                : ("Пользователь с данным адресом электронной почты уже существует", null);
         }
 
-        public async Task<User?> ChangePasswordAsync(LoginRequestDTO loginDTO)
+        public async Task<(string? error, User? result)> LoginAsync(LoginRequest loginRequest, CancellationToken token)
         {
-            var user = await _userRepository.GetUserByEmailAsync(loginDTO.Email);
-            user.Password = loginDTO.Password;
-            await _userRepository.UpdateUserAsync(user);
-            return user;
+            var user = await userRepository.GetUserByEmailAsync(loginRequest.Email, token);
+            if (user == null) return ("Пользователь не найден", null);
+            if (user.Password != loginRequest.Password) return ("Введён неправильный пароль", null);
+            return (null, user);
         }
 
-        private async Task<bool> IsUserExistsAsync(User user) =>
-            await _userRepository.GetUserByEmailAsync(user.Email) == null ? false : true;
+        public async Task<(string? error, User? result)> ChangePasswordAsync(СhangePasswordRequest changePasswordRequest, CancellationToken token)
+        {
+            var user = await userRepository.GetUserByEmailAsync(changePasswordRequest.Email, token);
+            if (user == null) return ("Пользователь не найден", null);
+            if (user.Phone != changePasswordRequest.Phone) return ("Непральный номер телефона", null);
+            user.Password = changePasswordRequest.Password;
+            await userRepository.UpdateUserAsync(user, token);
+            return (null, user);
+        }
     }
 }

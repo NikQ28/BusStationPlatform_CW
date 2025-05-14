@@ -5,22 +5,22 @@ namespace BusStationPlatform.Domains.Entities
     /// <summary>
     /// Представляет место на маршруте.
     /// </summary>
-    public class Place
+    public class Seat
     {
         /// <summary>
         /// Уникальный идентификатор места.
         /// </summary>
-        public int PlaceID { get; set; }
+        public int SeatId { get; set; }
 
         /// <summary>
         /// Идентификатор маршрута, к которому принадлежит место.
         /// </summary>
-        public int RouteID { get; set; }
+        public int RouteId { get; set; }
 
         /// <summary>
         /// Номер места.
         /// </summary>
-        public int PlaceNumber { get; set; }
+        public int SeatNumber { get; set; }
 
         /// <summary>
         /// Номер секции, к которой принадлежит место.

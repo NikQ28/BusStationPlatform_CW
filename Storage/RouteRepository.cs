@@ -1,25 +1,28 @@
-﻿using BusStationPlatform.Domains.DTO;
-using BusStationPlatform.Domains.Services.Contracts;
+﻿using BusStationPlatform.Domains.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Route = BusStationPlatform.Domains.Entities.Route;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
 
 namespace BusStationPlatform.Storage
 {
-    public class RouteRepository(BusStationPlatformContext _context) : IRouteRepository
+    public class RouteRepository(BusStationPlatformContext context) : IRouteRepository
     {
-        public async Task<Route?> GetRouteByIDAsync(int id) =>
-            await _context.Route.FindAsync(id);
+        public async Task<Route?> GetRouteByIdAsync(int id, CancellationToken token) =>
+            await context.Route.FindAsync([id], token);
 
-        public async Task<List<Route>?> GetRoutesByPointsDateAsync(RouteRequestDTO routeDTO)
+        public async Task<List<Route>?> GetRoutesByPointsDateAsync(SearchRouteRequest routeRequest, CancellationToken token)
         {
-            var routesID = await GetRoutesIDByPointsDateAsync(routeDTO);
-            return await _context.Route.Where(route => routesID.Contains(route.RouteID)).ToListAsync();
+            var routesIds = await GetRoutesIdsByPointsDateAsync(routeRequest, token);
+            if (routesIds == null) return null;
+            return await context.Route.Where(route => routesIds.Contains(route.RouteId)).ToListAsync(token);
         }
 
-        public async Task<List<int>?> GetRoutesIDByPointsDateAsync(RouteRequestDTO routeDTO) =>
-            await _context.Route
-                .Where(r => r.DeparturePoint == routeDTO.DeparturePoint && r.ArrivalPoint == routeDTO.ArrivalPoint && DateOnly.FromDateTime(r.DepartureDatetime) == routeDTO.DepartureDateTime)
-                .Select(r => r.RouteID)
-                .ToListAsync();
+        public async Task<List<int>?> GetRoutesIdsByPointsDateAsync(SearchRouteRequest routeRequest, CancellationToken token) =>
+            await context.Route
+                .Where(r => r.DeparturePoint == routeRequest.DeparturePoint 
+                    && r.ArrivalPoint == routeRequest.ArrivalPoint 
+                    && DateOnly.FromDateTime(r.DepartureDatetime) == routeRequest.DepartureDatetime)
+                .Select(r => r.RouteId)
+                .ToListAsync(token);
     }
 }

@@ -1,29 +1,31 @@
 ﻿using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.Services.Contracts;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusStationPlatform.Storage
 {
-    public class PaymentRepository(BusStationPlatformContext _context) : IPaymentRepository
+    public class PaymentRepository(BusStationPlatformContext context) : IPaymentRepository
     {
-        public async Task<List<Payment>?> GetPaymentsByUserAsync(User user)
+        public async Task<List<Payment>?> GetPaymentsByUserAsync(User user, CancellationToken token)
         {
-            var paymentsID = await GetPaymentsIDByUserAsync(user);
-            return await _context.Payment.Where(payment => paymentsID.Contains(payment.PaymentID)).ToListAsync();
+            var paymentsIds = await GetPaymentsIdsByUserAsync(user, token);
+            if (paymentsIds == null) return null;
+            return await context.Payment.Where(payment => paymentsIds.Contains(payment.PaymentId)).ToListAsync(token);
         }
 
-        public async Task<List<int>?> GetPaymentsIDByUserAsync(User user) =>
-            await _context.Payment
-                .Where(payment => payment.UserID == user.UserID)
-                .Select(payment => payment.PaymentID)
-                .ToListAsync();
-        public async Task<Payment?> GetPaymentByInvoiceAsync(Invoice invoice) =>
-            await _context.Payment.FirstOrDefaultAsync(payment => payment.InvoiceID == invoice.InvoiceID);
+        public async Task<List<int>?> GetPaymentsIdsByUserAsync(User user, CancellationToken token) =>
+            await context.Payment
+                .Where(payment => payment.UserId == user.UserId)
+                .Select(payment => payment.PaymentId)
+                .ToListAsync(token);
 
-        public async Task<Payment?> CreatePaymentAsync(Payment newPayment)
+        public async Task<Payment?> GetPaymentByInvoiceAsync(Invoice invoice, CancellationToken token) =>
+            await context.Payment.FirstOrDefaultAsync(payment => payment.InvoiceId == invoice.InvoiceId, token);
+
+        public async Task<Payment?> CreatePaymentAsync(Payment newPayment, CancellationToken token)
         {
-            _context.Payment.Add(newPayment);
-            await _context.SaveChangesAsync();
+            context.Payment.Add(newPayment);
+            await context.SaveChangesAsync(token);
             return newPayment;
         }
     }

@@ -1,41 +1,41 @@
 ﻿using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.Services.Contracts;
+using BusStationPlatform.Domains.Services.Contracts.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusStationPlatform.Storage
 {
-    public class UserRepository(BusStationPlatformContext _context) : IUserRepository
+    public class UserRepository(BusStationPlatformContext context) : IUserRepository
     {
-        public async Task<User?> GetUserByIdAsync(int id) =>
-            await _context.User.FindAsync(id);
+        public async Task<User?> GetUserByIdAsync(int id, CancellationToken token) =>
+            await context.User.FindAsync([id], token);
 
-        public async Task<User?> GetUserByEmailAsync(string email) =>
-            await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+        public async Task<User?> GetUserByEmailAsync(string email, CancellationToken token) =>
+            await context.User.FirstOrDefaultAsync(u => u.Email == email, token);
 
-        public async Task<User?> CreateUserAsync(User newUser)
+        public async Task<User?> CreateUserAsync(User newUser, CancellationToken token)
         {
-            _context.User.Add(newUser);
-            await _context.SaveChangesAsync();
+            context.User.Add(newUser);
+            await context.SaveChangesAsync(token);
             return newUser;
         }
 
-        public async Task<User?> UpdateUserAsync(User updatedUser)
+        public async Task<User?> UpdateUserAsync(User updatedUser, CancellationToken token)
         {
-            var user = await _context.User.FindAsync(updatedUser.UserID);
+            var user = await context.User.FindAsync([updatedUser.UserId], token);
             if (user == null)
                 return null;
-            _context.Update(updatedUser);
-            await _context.SaveChangesAsync();
+            context.Update(updatedUser);
+            await context.SaveChangesAsync(token);
             return updatedUser;
         }
 
-        public async Task<int?> DeleteUserAsync(int id)
+        public async Task<int?> DeleteUserAsync(int id, CancellationToken token)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await context.User.FindAsync([id], token);
             if (user != null)
             {
-                _context.User.Remove(user);
-                await _context.SaveChangesAsync();
+                context.User.Remove(user);
+                await context.SaveChangesAsync(token);
                 return id;
             }
             return null;

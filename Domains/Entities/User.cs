@@ -11,27 +11,26 @@ namespace BusStationPlatform.Domains.Entities
         /// Уникальный идентификатор пользователя.
         /// </summary>
         [JsonIgnore]
-        public int UserID { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
         /// Имя пользователя.
         /// </summary>
-        public string Username { get; set; }
+        public required string Username { get; set; }
 
         /// <summary>
         /// Пароль пользователя.
         /// </summary>
-        [JsonIgnore]
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         /// <summary>
         /// Электронная почта пользователя.
         /// </summary>
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         /// <summary>
         /// Номер телефона пользователя.
         /// </summary>
-        public string? Phone { get; set; }
+        public required string Phone { get; set; }
     }
 }

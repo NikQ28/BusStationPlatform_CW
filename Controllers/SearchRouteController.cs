@@ -1,21 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BusStationPlatform.Domains.DTO;
-using Route = BusStationPlatform.Domains.Entities.Route;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+using BusStationPlatform.Domains.ValueObjects;
 using BusStationPlatform.Domains.Services.Contracts;
+
 
 namespace BusStationPlatform.Controllers
 {
+    /// <summary>
+    /// Контроллер для поиска маршрутов.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class SearchRouteController(ISearchRouteService _searchRouteService) : ControllerBase
+    public class SearchRouteController(ISearchRouteService searchRouteService) : ControllerBase
     {
-        [Route("Search")]
-        [HttpGet]
-        public async Task<IActionResult> GetRoutesAsync([FromQuery] RouteRequestDTO routeDTO)
+        /// <summary>
+        /// Получает маршруты по заданным параметрам поиска.
+        /// </summary>
+        /// <param name="routeRequest">Параметры поиска маршрута.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns>Список найденных маршрутов.</returns>
+        [HttpGet("search-route")]
+        public async Task<IActionResult> GetRoutesAsync([FromQuery] SearchRouteRequest routeRequest, CancellationToken token)
         {
-            var routes = await _searchRouteService.GetRoutesAsync(routeDTO);
-            return routes == null ? BadRequest() : Ok(routes);
+            if (routeRequest == null) return BadRequest("Запрос не может быть пустым");
+                  
+            var (error, routes) = await searchRouteService.GetRoutesAsync(routeRequest, token);
+            return (string.IsNullOrWhiteSpace(error)) ? Ok(routes) : NotFound(error);
         }
     }
 }

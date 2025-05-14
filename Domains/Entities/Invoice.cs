@@ -8,7 +8,7 @@
         /// <summary>
         /// Уникальный идентификатор счета.
         /// </summary>
-        public int InvoiceID { get; set; }
+        public int InvoiceId { get; set; }
 
         /// <summary>
         /// Сумма счета.

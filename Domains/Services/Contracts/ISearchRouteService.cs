@@ -1,5 +1,4 @@
-﻿using BusStationPlatform.Domains.DTO;
-using BusStationPlatform.Domains.Entities;
+﻿using BusStationPlatform.Domains.ValueObjects;
 using Route = BusStationPlatform.Domains.Entities.Route;
 
 namespace BusStationPlatform.Domains.Services.Contracts
@@ -10,10 +9,11 @@ namespace BusStationPlatform.Domains.Services.Contracts
     public interface ISearchRouteService
     {
         /// <summary>
-        /// Получает список маршрутов на основе предоставленных данных.
+        /// Получает список маршрутов по заданным параметрам поиска.
         /// </summary>
-        /// <param name="routeDTO">Объект, содержащий данные для поиска маршрутов.</param>
-        /// <returns>Асинхронная задача, представляющая результат операции. Результат задачи содержит список маршрутов, если они найдены; в противном случае - null.</returns>
-        public Task<List<Route>?> GetRoutesAsync(RouteRequestDTO routeDTO);
+        /// <param name="routeRequest">Параметры поиска маршрута.</param>
+        /// <param name="token">Токен отмены операции.</param>
+        /// <returns>Кортеж, содержащий ошибку (если есть) и список найденных маршрутов.</returns>
+        public Task<(string? error, List<Route>? result)> GetRoutesAsync(SearchRouteRequest routeRequest, CancellationToken token);
     }
 }

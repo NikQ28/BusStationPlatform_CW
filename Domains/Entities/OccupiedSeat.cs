@@ -3,21 +3,21 @@
     /// <summary>
     /// Представляет занятое место на маршруте.
     /// </summary>
-    public class OccupiedPlace
+    public class OccupiedSeat
     {
         /// <summary>
         /// Уникальный идентификатор занятого места.
         /// </summary>
-        public int OccupiedPlaceID { get; set; }
+        public int OccupiedSeatId { get; set; }
 
         /// <summary>
         /// Идентификатор места.
         /// </summary>
-        public int PlaceID { get; set; }
+        public int SeatId { get; set; }
 
         /// <summary>
         /// Идентификатор билета, связанного с занятым местом.
         /// </summary>
-        public int TicketID { get; set; }
+        public int TicketId { get; set; }
     }
 }

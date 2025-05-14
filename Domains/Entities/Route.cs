@@ -8,7 +8,7 @@
         /// <summary>
         /// Уникальный идентификатор маршрута.
         /// </summary>
-        public required int RouteID { get; set; }
+        public required int RouteId { get; set; }
 
         /// <summary>
         /// Точка отправления маршрута.
