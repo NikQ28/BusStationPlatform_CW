@@ -1,7 +1,8 @@
-﻿using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.Services.Contracts.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Route = BusStationPlatform.Domains.Entities.Route;
+﻿using Microsoft.EntityFrameworkCore;
+
+using BusStationPlatform.Domain.Entities;
+using BusStationPlatform.Domain.Services.Contracts.Repositories;
+using Route = BusStationPlatform.Domain.Entities.Route;
 
 namespace BusStationPlatform.Storage
 {

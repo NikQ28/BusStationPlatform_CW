@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using BusStationPlatform.Domains.ValueObjects;
-using BusStationPlatform.Domains.Services.Contracts;
-using BusStationPlatform.Domains.Entities;
-using BusStationPlatform.Domains.Services.Contracts.Repositories;
+using BusStationPlatform.Domain.ValueObjects;
+using BusStationPlatform.Domain.Services.Contracts;
+using BusStationPlatform.Domain.Entities;
+using BusStationPlatform.Domain.Services.Contracts.Repositories;
 
 namespace BusStationPlatform.Controllers
 {
@@ -35,7 +35,7 @@ namespace BusStationPlatform.Controllers
         /// <param name="token">Токен отмены операции.</param>
         /// <returns>Результат бронирования.</returns>
         [HttpPost("booking")]
-        public async Task<IActionResult> BookingSeat([FromBody] BookingRequest bookingRequest, CancellationToken token)
+        public async Task<IActionResult> BookingSeatAsync([FromBody] BookingRequest bookingRequest, CancellationToken token)
         {
             if (bookingRequest == null)
                 return BadRequest("Запрос не может быть пустым");

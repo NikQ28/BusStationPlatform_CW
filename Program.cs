@@ -1,10 +1,10 @@
-using BusStationPlatform.Domains.Services;
-using BusStationPlatform.Storage;
 using Microsoft.EntityFrameworkCore;
-using BusStationPlatform.Domains.Services.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using BusStationPlatform.Domains.Services.UseCases;
-using BusStationPlatform.Domains.Services.Contracts.Repositories;
+
+using BusStationPlatform.Storage;
+using BusStationPlatform.Domain.Services.Contracts;
+using BusStationPlatform.Domain.Services.UseCases;
+using BusStationPlatform.Domain.Services.Contracts.Repositories;
 
 namespace BusStationPlatform
 {
@@ -20,19 +20,28 @@ namespace BusStationPlatform
 
             builder.Services.AddDbContext<BusStationPlatformContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IPassengerRepository, PassengerRepository>();
+            builder.Services.AddScoped<IRouteRepository, RouteRepository>();
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+            builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+            builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+            
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<ISearchRouteService, SearchRouteService>();
+            builder.Services.AddScoped<IReturnTicketService, ReturnTicketService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<ISendTicketService, SendTicketService>();
 
-            builder.Services.AddTransient<IUserRepository, UserRepository>();
-            builder.Services.AddTransient<IPassengerRepository, PassengerRepository>();
-            builder.Services.AddTransient<IRouteRepository, RouteRepository>();
-            builder.Services.AddTransient<ITicketRepository, TicketRepository>();
-            builder.Services.AddTransient<IInvoiceRepository, InvoiceRepository>();
-            builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
-            builder.Services.AddTransient<ISeatRepository, SeatRepository>();
+            builder.Services.AddHostedService<InvoiceExpirationCheckService>();
 
-            builder.Services.AddTransient<IAuthService, AuthService>();
-            builder.Services.AddTransient<IBookingService, BookingService>();
-            builder.Services.AddTransient<ISearchRouteService, SearchRouteService>();
-            builder.Services.AddTransient<IReturnTicketService, ReturnTicketService>();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => options.LoginPath = "/api/auth/login");
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -43,10 +52,9 @@ namespace BusStationPlatform
             }
 
             app.UseHttpsRedirection();
-
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            
             app.MapControllers();
 
             app.Run();

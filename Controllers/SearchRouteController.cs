@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
-using BusStationPlatform.Domains.ValueObjects;
-using BusStationPlatform.Domains.Services.Contracts;
+using BusStationPlatform.Domain.ValueObjects;
+using BusStationPlatform.Domain.Services.Contracts;
 
 
 namespace BusStationPlatform.Controllers
@@ -9,6 +10,7 @@ namespace BusStationPlatform.Controllers
     /// <summary>
     /// Контроллер для поиска маршрутов.
     /// </summary>
+    [AllowAnonymous]
     [ApiController]
     [Route("api/[controller]")]
     public class SearchRouteController(ISearchRouteService searchRouteService) : ControllerBase

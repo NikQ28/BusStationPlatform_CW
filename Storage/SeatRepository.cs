@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using BusStationPlatform.Domains.Entities;
-using Route = BusStationPlatform.Domains.Entities.Route;
-using BusStationPlatform.Domains.Services.Contracts.Repositories;
+using BusStationPlatform.Domain.Entities;
+using Route = BusStationPlatform.Domain.Entities.Route;
+using BusStationPlatform.Domain.Services.Contracts.Repositories;
 
 namespace BusStationPlatform.Storage
 {
@@ -33,10 +33,10 @@ namespace BusStationPlatform.Storage
 
         public async Task<int?> DeleteOccupiedSeatAsync(int id, CancellationToken token)
         {
-            var occupiedPlace = await context.OccupiedSeat.FindAsync(id, token);
-            if (occupiedPlace != null)
+            var occupiedSeat = await context.OccupiedSeat.FindAsync([id], token);
+            if (occupiedSeat != null)
             {
-                context.Remove(occupiedPlace);
+                context.Remove(occupiedSeat);
                 await context.SaveChangesAsync(token);
                 return id;
             }
@@ -47,6 +47,6 @@ namespace BusStationPlatform.Storage
             await context.OccupiedSeat.FirstOrDefaultAsync(occupiedSeat => occupiedSeat.TicketId == ticket.TicketId, token);
 
         public async Task<OccupiedSeat?> GetOccupiedSeatBySeatAsync(Seat seat, CancellationToken token) =>
-            await context.OccupiedSeat.FirstOrDefaultAsync(occupiedSeat => occupiedSeat.TicketId == seat.SeatId, token);
+            await context.OccupiedSeat.FirstOrDefaultAsync(occupiedSeat => occupiedSeat.SeatId == seat.SeatId, token);
     }
 }

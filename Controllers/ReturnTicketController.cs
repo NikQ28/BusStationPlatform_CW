@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
-using BusStationPlatform.Domains.Services.Contracts;
-using BusStationPlatform.Domains.ValueObjects;
+using BusStationPlatform.Domain.Services.Contracts;
+using BusStationPlatform.Domain.ValueObjects;
 
 namespace BusStationPlatform.Controllers
 {
     /// <summary>
     /// Контроллер для управления возвратом билетов.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ReturnTicketController(IReturnTicketService returnTicketService) : ControllerBase
